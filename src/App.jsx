@@ -4,6 +4,7 @@ import PracticeView from './views/PracticeView';
 import LeaderboardView from './views/LeaderboardView';
 import HistoryView from './views/HistoryView';
 import SettingsView from './views/SettingsView';
+import ResultsView from './views/ResultsView';
 import { generateWords } from './data/words';
 import { calculateWPM, calculateAccuracy } from './utils/typing';
 
@@ -33,6 +34,7 @@ function App() {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedChars, setTypedChars] = useState({});
   const [timeLeft, setTimeLeft] = useState(settings.time);
+  const [chartData, setChartData] = useState([]);
 
   // Refs
   const timerRef = useRef(null);
@@ -145,6 +147,32 @@ function App() {
       localStorage.setItem('typerush_history', JSON.stringify(history.slice(0, 50))); // Keep last 50
     }
   }, [gameState]); // only on state change, stats is implicitly stable enough for this check
+
+  // Collect data for charts
+  useEffect(() => {
+    if (gameState === GAME_STATE.RUNNING && stats) {
+      setChartData(prev => {
+        const timeElapsed = settings.time - timeLeft;
+        if (timeElapsed === 0) return prev; // Skip 0s
+        
+        const existingIndex = prev.findIndex(item => item.time === timeElapsed);
+        const newDataPoint = {
+          time: timeElapsed,
+          wpm: stats.wpm,
+          accuracy: stats.accuracy
+        };
+
+        if (existingIndex >= 0) {
+           const newArray = [...prev];
+           newArray[existingIndex] = newDataPoint;
+           return newArray;
+        }
+        return [...prev, newDataPoint];
+      });
+    } else if (gameState === GAME_STATE.IDLE) {
+      setChartData([]);
+    }
+  }, [gameState, stats, timeLeft, settings.time]);
 
   // Handle keyboard input
   const handleKeyDown = useCallback(
@@ -263,6 +291,16 @@ function App() {
         return <SettingsView settings={settings} onSettingsChange={handleSettingsChange} />;
       case 'practice':
       default:
+        if (gameState === GAME_STATE.FINISHED) {
+          return (
+            <ResultsView 
+              stats={stats} 
+              chartData={chartData} 
+              onRestart={handleRestart} 
+              setView={setCurrentView} 
+            />
+          );
+        }
         return (
           <PracticeView
             words={words}
@@ -289,32 +327,6 @@ function App() {
       onSettingsChange={handleSettingsChange}
     >
       {renderView()}
-      
-      {/* End Session Overlay */}
-      {gameState === GAME_STATE.FINISHED && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-surface-container border border-outline-variant/30 p-12 rounded-2xl max-w-lg w-full flex flex-col items-center gap-6 shadow-2xl scale-in-center">
-            <h2 className="font-headline-lg text-primary-fixed mb-4">Time's Up!</h2>
-            <div className="flex gap-12 mb-8">
-              <div className="flex flex-col items-center">
-                <span className="font-metric-label text-on-surface-variant uppercase tracking-widest mb-2">WPM</span>
-                <span className="font-metric-value text-5xl text-primary">{stats?.wpm}</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="font-metric-label text-on-surface-variant uppercase tracking-widest mb-2">Accuracy</span>
-                <span className="font-metric-value text-5xl text-primary">{stats?.accuracy}%</span>
-              </div>
-            </div>
-            <button 
-              onClick={handleRestart}
-              className="px-8 py-3 bg-primary-fixed text-on-primary-fixed font-headline-md rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-[0_0_15px_rgba(195,244,0,0.3)] hover:shadow-[0_0_25px_rgba(195,244,0,0.5)]"
-            >
-              Play Again
-            </button>
-            <p className="font-body-sm text-on-surface-variant/60 mt-2">or press Tab</p>
-          </div>
-        </div>
-      )}
     </Layout>
   );
 }

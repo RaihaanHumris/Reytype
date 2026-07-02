@@ -47,6 +47,9 @@ export default function PracticeView({
     }
   };
 
+  // Calculate dynamic line count based on font size
+  const dynamicLineCount = settings.fontSize === 24 ? 4 : settings.fontSize === 40 ? 2 : 3;
+
   return (
     <div className="max-w-container-max w-full">
       {/* Progress Line */}
@@ -154,7 +157,7 @@ export default function PracticeView({
           style={{ 
             fontSize: `${settings.fontSize}px`,
             lineHeight: 1.5,
-            height: `${(settings.fontSize * 1.5 + 8) * settings.lineCount}px` 
+            height: `${(settings.fontSize * 1.5 + 8) * dynamicLineCount}px` 
           }}
         >
           <div className="absolute inset-0 overflow-y-auto pr-4 pointer-events-none">
