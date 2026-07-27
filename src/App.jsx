@@ -29,7 +29,7 @@ function App() {
 
   // Game state
   const [gameState, setGameState] = useState(GAME_STATE.IDLE);
-  const [words, setWords] = useState(() => generateWords(settings.language));
+  const [words, setWords] = useState(() => generateWords(50, settings.language));
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedChars, setTypedChars] = useState({});
@@ -43,7 +43,7 @@ function App() {
   // Generate new words when language changes
   useEffect(() => {
     if (gameState === GAME_STATE.IDLE) {
-      setWords(generateWords(settings.language));
+      setWords(generateWords(50, settings.language));
     }
   }, [settings.language, gameState]);
 
@@ -241,7 +241,7 @@ function App() {
       clearInterval(timerRef.current);
     }
     setGameState(GAME_STATE.IDLE);
-    setWords(generateWords(settings.language));
+    setWords(generateWords(50, settings.language));
     setCurrentWordIndex(0);
     setCurrentCharIndex(0);
     setTypedChars({});
@@ -252,8 +252,8 @@ function App() {
   const handleSettingsChange = useCallback(
     (newSettings) => {
       setSettings(newSettings);
-      if (newSettings.language !== settings.language && gameState === GAME_STATE.IDLE) {
-        setWords(generateWords(newSettings.language));
+        if (newSettings.language !== settings.language && gameState === GAME_STATE.IDLE) {
+        setWords(generateWords(50, newSettings.language));
       }
       if (newSettings.time !== settings.time && gameState === GAME_STATE.IDLE) {
         setTimeLeft(newSettings.time);
