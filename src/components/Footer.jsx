@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="flex items-center gap-4 mb-4 md:mb-0">
           <span className="font-display-typing text-primary-fixed">ReyType</span>
           <span className="text-on-surface-variant text-body-sm">
-            © 2024. Precision Typing.
+            © 2026. Muhammad Raihaan Humris.
           </span>
         </div>
         <div className="flex gap-6">
