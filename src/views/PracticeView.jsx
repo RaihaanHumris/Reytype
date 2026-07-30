@@ -12,6 +12,7 @@ export default function PracticeView({
   settings,
   onSettingsChange,
   onKeyDown,
+  capsLockActive,
 }) {
   const containerRef = useRef(null);
   const activeWordRef = useRef(null);
@@ -156,6 +157,14 @@ export default function PracticeView({
           </div>
         </div>
       </div>
+
+      {/* Caps Lock Warning */}
+      {capsLockActive && (
+        <div className="w-full mb-4 bg-error-container/20 text-error border border-error/50 rounded-lg py-2 px-4 flex items-center justify-center gap-2 animate-fade-in shadow-[0_0_15px_rgba(255,180,171,0.2)]">
+          <span className="material-symbols-outlined text-[18px]">warning</span>
+          <span className="font-metric-label font-bold tracking-wide">CAPSLOCK NYALA</span>
+        </div>
+      )}
 
       {/* The Stage: Typing Area */}
       <div className="relative bg-surface-container p-12 rounded-xl border border-outline-variant/10 focus-within:border-primary-fixed/30 transition-all focus-outline">

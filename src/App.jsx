@@ -35,6 +35,7 @@ function App() {
   const [typedChars, setTypedChars] = useState({});
   const [timeLeft, setTimeLeft] = useState(settings.time);
   const [chartData, setChartData] = useState([]);
+  const [capsLockActive, setCapsLockActive] = useState(false);
 
   // Refs
   const timerRef = useRef(null);
@@ -186,6 +187,11 @@ function App() {
     (e) => {
       if (gameState === GAME_STATE.FINISHED) return;
 
+      // Track Caps Lock state
+      if (e.getModifierState) {
+        setCapsLockActive(e.getModifierState('CapsLock'));
+      }
+
       if (e.key === 'Escape') {
         e.preventDefault();
         handleRestart();
@@ -222,10 +228,6 @@ function App() {
               [currentWordIndex]: current.slice(0, -1),
             };
           });
-        } else if (currentWordIndex > 0 && currentCharIndex === 0) {
-           // Allow backspacing to previous word if we haven't typed anything in the current word yet
-           setCurrentWordIndex(prev => prev - 1);
-           setCurrentCharIndex((typedChars[currentWordIndex - 1] || '').length);
         }
       } else if (e.key.length === 1) {
         // Regular character
@@ -328,6 +330,7 @@ function App() {
             settings={settings}
             onSettingsChange={handleSettingsChange}
             onKeyDown={handleKeyDown}
+            capsLockActive={capsLockActive}
           />
         );
     }
