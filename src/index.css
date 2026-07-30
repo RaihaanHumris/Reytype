@@ -19,8 +19,8 @@
     box-shadow: 0 0 8px 2px rgba(195, 244, 0, 0.4);
   }
 
-  .typing-word-untyped { color: #56657c; }
-  .typing-word-correct { color: #ffffff; }
+  .typing-word-untyped { color: #ffffff; }
+  .typing-word-correct { color: #56657c; }
   .typing-word-incorrect { color: #ffb4ab; text-decoration: underline; text-decoration-color: #93000a; }
 }
 
