@@ -76,6 +76,13 @@ function App() {
     };
   }, [gameState]);
 
+  // Generate more words dynamically if running out
+  useEffect(() => {
+    if (words.length - currentWordIndex < 20) {
+      setWords(prev => [...prev, ...generateWords(50, settings.language)]);
+    }
+  }, [currentWordIndex, words.length, settings.language]);
+
   // Calculate live/final stats
   const stats = useMemo(() => {
     if (gameState === GAME_STATE.IDLE) return null;
