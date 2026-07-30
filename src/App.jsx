@@ -259,14 +259,21 @@ function App() {
   const handleSettingsChange = useCallback(
     (newSettings) => {
       setSettings(newSettings);
-        if (newSettings.language !== settings.language && gameState === GAME_STATE.IDLE) {
+      
+      // Restart the session if time or language settings change
+      if (newSettings.language !== settings.language || newSettings.time !== settings.time) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+        setGameState(GAME_STATE.IDLE);
         setWords(generateWords(50, newSettings.language));
-      }
-      if (newSettings.time !== settings.time && gameState === GAME_STATE.IDLE) {
+        setCurrentWordIndex(0);
+        setCurrentCharIndex(0);
+        setTypedChars({});
         setTimeLeft(newSettings.time);
       }
     },
-    [settings, gameState]
+    [settings]
   );
 
   // Keyboard shortcut: Tab to restart
