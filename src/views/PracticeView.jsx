@@ -16,6 +16,11 @@ export default function PracticeView({
   const containerRef = useRef(null);
   const activeWordRef = useRef(null);
 
+  // Custom Time Modal State
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [customTimeValue, setCustomTimeValue] = useState("60");
+  const [customTimeUnit, setCustomTimeUnit] = useState("seconds");
+
   // Auto-focus logic
   useEffect(() => {
     if (containerRef.current) {
@@ -40,10 +45,16 @@ export default function PracticeView({
   const currentAcc = stats ? stats.accuracy : 100;
 
   const handleCustomTimeClick = () => {
-    const minutes = prompt("Enter custom time in minutes (e.g. 5):", "5");
-    if (minutes !== null && !isNaN(minutes) && parseInt(minutes) > 0) {
-      const seconds = parseInt(minutes) * 60;
+    setShowCustomModal(true);
+  };
+
+  const handleCustomTimeSubmit = (e) => {
+    e.preventDefault();
+    const val = parseInt(customTimeValue);
+    if (!isNaN(val) && val > 0) {
+      const seconds = customTimeUnit === 'minutes' ? val * 60 : val;
       onSettingsChange({ ...settings, time: seconds, isCustomTime: true });
+      setShowCustomModal(false);
     }
   };
 
@@ -243,6 +254,51 @@ export default function PracticeView({
           <span>to pause session</span>
         </div>
       </div>
+
+      {/* Custom Time Modal */}
+      {showCustomModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-surface-container p-6 rounded-xl border border-outline-variant shadow-2xl w-full max-w-sm animate-scale-in-center">
+            <h3 className="text-xl font-headline-md text-on-surface mb-4">Set Waktu Custom</h3>
+            <form onSubmit={handleCustomTimeSubmit}>
+              <div className="flex gap-4 mb-6">
+                <input
+                  type="number"
+                  min="1"
+                  value={customTimeValue}
+                  onChange={(e) => setCustomTimeValue(e.target.value)}
+                  placeholder="Angka"
+                  className="w-full min-w-0 bg-surface-container-highest border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary-fixed"
+                  required
+                />
+                <select
+                  value={customTimeUnit}
+                  onChange={(e) => setCustomTimeUnit(e.target.value)}
+                  className="bg-surface-container-highest border border-outline-variant rounded-lg px-2 py-2 text-on-surface focus:outline-none focus:border-primary-fixed cursor-pointer"
+                >
+                  <option value="seconds">Detik</option>
+                  <option value="minutes">Menit</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCustomModal(false)}
+                  className="px-4 py-2 rounded-lg text-on-surface-variant font-metric-label hover:bg-surface-variant transition-colors"
+                >
+                  BATAL
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-primary-fixed text-on-primary-fixed font-metric-label hover:opacity-90 transition-opacity"
+                >
+                  SIMPAN
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
