@@ -66,7 +66,7 @@ export function getPerformanceRating(wpm) {
     return {
       label: 'Grandmaster',
       sublabel: 'Kecepatan luar biasa setara pengetik kompetitif',
-      color: '#c3f400',
+      color: 'rgb(var(--c-primary-fixed))',
       tier: 'S+',
     };
   }
@@ -74,7 +74,7 @@ export function getPerformanceRating(wpm) {
     return {
       label: 'Expert',
       sublabel: 'Sangat cepat dan presisi tinggi',
-      color: '#00daf8',
+      color: 'rgb(var(--c-secondary-fixed-dim))',
       tier: 'S',
     };
   }
@@ -82,7 +82,7 @@ export function getPerformanceRating(wpm) {
     return {
       label: 'Advanced',
       sublabel: 'Di atas rata-rata pengetik profesional',
-      color: '#a5eeff',
+      color: 'rgb(var(--c-primary-fixed))',
       tier: 'A',
     };
   }
@@ -90,7 +90,7 @@ export function getPerformanceRating(wpm) {
     return {
       label: 'Proficient',
       sublabel: 'Kecepatan baik dan stabil untuk produktivitas',
-      color: '#dae2fd',
+      color: 'rgb(var(--c-on-surface))',
       tier: 'B',
     };
   }
@@ -98,14 +98,14 @@ export function getPerformanceRating(wpm) {
     return {
       label: 'Developing',
       sublabel: 'Terus berlatih posisi jari 10 jari pada home row',
-      color: '#c4c9ac',
+      color: 'rgb(var(--c-on-surface-variant))',
       tier: 'C',
     };
   }
   return {
     label: 'Beginner',
     sublabel: 'Fokus pada akurasi ketukan sebelum meningkatkan kecepatan',
-    color: '#8e9379',
+    color: 'rgb(var(--c-outline))',
     tier: 'D',
   };
 }
@@ -196,60 +196,60 @@ export function playKeySound(eventType, profile = 'off') {
  */
 const FINGER_MAP = {
   // Left Pinky
-  '1': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#ff8a80' },
-  'q': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#ff8a80' },
-  'a': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#ff8a80' },
-  'z': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#ff8a80' },
+  '1': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#e11d48' },
+  'q': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#e11d48' },
+  'a': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#e11d48' },
+  'z': { id: 'l-pinky', label: 'Kelingking Kiri', color: '#e11d48' },
   // Left Ring
-  '2': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#ffd180' },
-  'w': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#ffd180' },
-  's': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#ffd180' },
-  'x': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#ffd180' },
+  '2': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#d97706' },
+  'w': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#d97706' },
+  's': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#d97706' },
+  'x': { id: 'l-ring', label: 'Jari Manis Kiri', color: '#d97706' },
   // Left Middle
-  '3': { id: 'l-middle', label: 'Jari Tengah Kiri', color: '#c3f400' },
-  'e': { id: 'l-middle', label: 'Jari Tengah Kiri', color: '#c3f400' },
-  'd': { id: 'l-middle', label: 'Jari Tengah Kiri', color: '#c3f400' },
-  'c': { id: 'l-middle', label: 'Jari Tengah Kiri', color: '#c3f400' },
+  '3': { id: 'l-middle', label: 'Jari Tengah Kiri', color: 'rgb(var(--c-primary-fixed))' },
+  'e': { id: 'l-middle', label: 'Jari Tengah Kiri', color: 'rgb(var(--c-primary-fixed))' },
+  'd': { id: 'l-middle', label: 'Jari Tengah Kiri', color: 'rgb(var(--c-primary-fixed))' },
+  'c': { id: 'l-middle', label: 'Jari Tengah Kiri', color: 'rgb(var(--c-primary-fixed))' },
   // Left Index
-  '4': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  '5': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  'r': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  't': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  'f': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  'g': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  'v': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
-  'b': { id: 'l-index', label: 'Telunjuk Kiri', color: '#00daf8' },
+  '4': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  '5': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  'r': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  't': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  'f': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  'g': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  'v': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
+  'b': { id: 'l-index', label: 'Telunjuk Kiri', color: 'rgb(var(--c-secondary-fixed-dim))' },
   // Right Index
-  '6': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  '7': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'y': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'u': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'h': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'j': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'n': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
-  'm': { id: 'r-index', label: 'Telunjuk Kanan', color: '#80d8ff' },
+  '6': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  '7': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'y': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'u': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'h': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'j': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'n': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
+  'm': { id: 'r-index', label: 'Telunjuk Kanan', color: '#0284c7' },
   // Right Middle
-  '8': { id: 'r-middle', label: 'Jari Tengah Kanan', color: '#c3f400' },
-  'i': { id: 'r-middle', label: 'Jari Tengah Kanan', color: '#c3f400' },
-  'k': { id: 'r-middle', label: 'Jari Tengah Kanan', color: '#c3f400' },
-  ',': { id: 'r-middle', label: 'Jari Tengah Kanan', color: '#c3f400' },
+  '8': { id: 'r-middle', label: 'Jari Tengah Kanan', color: 'rgb(var(--c-primary-fixed))' },
+  'i': { id: 'r-middle', label: 'Jari Tengah Kanan', color: 'rgb(var(--c-primary-fixed))' },
+  'k': { id: 'r-middle', label: 'Jari Tengah Kanan', color: 'rgb(var(--c-primary-fixed))' },
+  ',': { id: 'r-middle', label: 'Jari Tengah Kanan', color: 'rgb(var(--c-primary-fixed))' },
   // Right Ring
-  '9': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#ffd180' },
-  'o': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#ffd180' },
-  'l': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#ffd180' },
-  '.': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#ffd180' },
+  '9': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#d97706' },
+  'o': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#d97706' },
+  'l': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#d97706' },
+  '.': { id: 'r-ring', label: 'Jari Manis Kanan', color: '#d97706' },
   // Right Pinky
-  '0': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' },
-  'p': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' },
-  ';': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' },
-  '/': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' },
-  '-': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' },
+  '0': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' },
+  'p': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' },
+  ';': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' },
+  '/': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' },
+  '-': { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' },
   // Thumb
-  ' ': { id: 'thumb', label: 'Ibu Jari (Spasi)', color: '#d3e4fe' },
+  ' ': { id: 'thumb', label: 'Ibu Jari (Spasi)', color: 'rgb(var(--c-on-surface))' },
 };
 
 export function getFingerInfo(char) {
   if (!char) return null;
   const lower = char.toLowerCase();
-  return FINGER_MAP[lower] || { id: 'r-pinky', label: 'Kelingking Kanan', color: '#ff8a80' };
+  return FINGER_MAP[lower] || { id: 'r-pinky', label: 'Kelingking Kanan', color: '#e11d48' };
 }

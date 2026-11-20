@@ -8,8 +8,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { getThemeById } from '../utils/themes';
 
-export default function HistoryView({ setView }) {
+export default function HistoryView({ setView, settings }) {
+  const chartColors = getThemeById(settings?.theme).chart;
   const [history, setHistory] = useState(() => {
     try {
       const saved = localStorage.getItem('typerush_history');
@@ -168,37 +170,38 @@ export default function HistoryView({ setView }) {
               >
                 <defs>
                   <linearGradient id="wpmGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#c3f400" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#c3f400" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor={chartColors.primary} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={chartColors.primary} stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#2d3449"
+                  stroke={chartColors.grid}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="session"
-                  stroke="#56657c"
-                  tick={{ fill: '#8e9379', fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                  stroke={chartColors.tick}
+                  tick={{ fill: chartColors.tick, fontSize: 11, fontFamily: 'JetBrains Mono' }}
                 />
                 <YAxis
-                  stroke="#56657c"
-                  tick={{ fill: '#8e9379', fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                  stroke={chartColors.tick}
+                  tick={{ fill: chartColors.tick, fontSize: 11, fontFamily: 'JetBrains Mono' }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#131b2e',
-                    borderColor: '#444933',
+                    backgroundColor: chartColors.tooltipBg,
+                    borderColor: chartColors.tooltipBorder,
                     borderRadius: '8px',
                   }}
                   itemStyle={{ fontFamily: 'JetBrains Mono', fontSize: '12px' }}
+                  labelStyle={{ color: chartColors.tooltipText }}
                 />
                 <Area
                   type="monotone"
                   dataKey="wpm"
                   name="WPM"
-                  stroke="#c3f400"
+                  stroke={chartColors.primary}
                   strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#wpmGrad)"

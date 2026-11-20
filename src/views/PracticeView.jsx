@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import VirtualKeyboard from '../components/VirtualKeyboard';
+import { THEMES } from '../utils/themes';
 
 export default function PracticeView({
   words,
@@ -136,6 +137,16 @@ export default function PracticeView({
 
   return (
     <div className="max-w-container-max w-full">
+      {/* Semantic SEO Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <h1 className="font-headline-md text-sm sm:text-base font-bold text-primary tracking-tight">
+          Latihan Mengetik MAKN Ende · Tes Kecepatan Mengetik 10 Jari
+        </h1>
+        <span className="font-body-sm text-xs text-on-surface-variant">
+          Platform Latihan Mengetik Cepat Interaktif Bahasa Indonesia & Inggris
+        </span>
+      </div>
+
       {/* Progress Line */}
       <div className="w-full h-1 bg-surface-container-highest mb-6 rounded-full overflow-hidden">
         <div
@@ -326,8 +337,36 @@ export default function PracticeView({
             </div>
           )}
 
-          {/* Right tools: Font Size + Virtual Keyboard Toggle */}
-          <div className="flex items-center gap-2 ml-auto">
+          {/* Right tools: Theme + Font Size + Virtual Keyboard Toggle */}
+          <div className="flex items-center gap-2 ml-auto flex-wrap">
+            {/* Theme Quick Picker */}
+            <div className="flex items-center bg-surface-container p-1 rounded-lg border border-outline-variant/20">
+              {THEMES.map((t) => {
+                const isSelected = (settings.theme || 'cyber-lime') === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => onSettingsChange({ ...settings, theme: t.id })}
+                    className={`px-2 py-0.5 font-metric-label text-[11px] rounded transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
+                      isSelected
+                        ? 'text-primary-fixed bg-surface-variant font-bold'
+                        : 'text-on-surface-variant hover:text-primary'
+                    }`}
+                    title={t.description}
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-full border border-black/20 shrink-0"
+                      style={{ backgroundColor: t.preview.accent }}
+                    />
+                    <span className="hidden sm:inline">
+                      {t.id === 'school-light' ? 'Terang' : t.name.split(' ')[0]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="flex items-center bg-surface-container p-1 rounded-lg border border-outline-variant/20">
               <span className="px-2 text-on-tertiary-container font-metric-label text-[10px]">
                 SIZE
@@ -650,6 +689,49 @@ export default function PracticeView({
           </>
         )}
       </div>
+
+      {/* Crawlable On-Page SEO Section for Search Engine Ranking */}
+      <section
+        aria-label="Informasi Latihan Mengetik MAKN Ende"
+        className="mt-12 pt-8 border-t border-outline-variant/20 text-on-surface-variant"
+      >
+        <details className="group bg-surface-container-low border border-outline-variant/20 rounded-xl p-5">
+          <summary className="flex items-center justify-between cursor-pointer list-none font-headline-md text-sm sm:text-base text-primary">
+            <span>
+              Panduan Latihan Mengetik MAKN Ende & Belajar Mengetik Cepat 10 Jari
+            </span>
+            <span className="material-symbols-outlined text-primary-fixed transition-transform group-open:rotate-180">
+              expand_more
+            </span>
+          </summary>
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm leading-relaxed font-body-sm">
+            <div>
+              <h2 className="font-semibold text-primary mb-1.5">
+                Tentang Latihan Mengetik MAKN Ende (ReyType)
+              </h2>
+              <p>
+                <strong>ReyType – Latihan Mengetik MAKN Ende</strong> adalah aplikasi web latihan
+                mengetik cepat dan tes kecepatan ketik (WPM) yang dirancang khusus untuk membantu
+                siswa Madrasah Aliyah Kejuruan Negeri (MAKN) Ende, pelajar sekolah, anak-anak,
+                maupun masyarakat umum dalam menguasai teknik mengetik 10 jari tanpa melihat
+                papan ketik.
+              </p>
+            </div>
+            <div>
+              <h2 className="font-semibold text-primary mb-1.5">
+                Tips Latihan Mengetik Cepat & Akurat
+              </h2>
+              <p>
+                Untuk meningkatkan skor <strong>latihan mengetik</strong>, posisikan jari telunjuk
+                kiri pada tombol <strong>F</strong> dan jari telunjuk kanan pada tombol{' '}
+                <strong>J</strong> (<em>Home Row</em>). Utamakan akurasi ketukan di atas 95%
+                menggunakan fitur <em>Papan Ketik Virtual 10 Jari</em> sebelum meningkatkan
+                kecepatan WPM Anda.
+              </p>
+            </div>
+          </div>
+        </details>
+      </section>
 
       {/* Custom Time Modal */}
       {showCustomModal && (

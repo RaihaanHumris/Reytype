@@ -3,10 +3,235 @@
 @tailwind utilities;
 
 @layer base {
+  :root,
+  [data-theme="cyber-lime"] {
+    --c-background: 11 19 38;
+    --c-on-background: 218 226 253;
+    --c-surface: 11 19 38;
+    --c-surface-dim: 11 19 38;
+    --c-surface-bright: 49 57 77;
+    --c-surface-container-lowest: 6 14 32;
+    --c-surface-container-low: 19 27 46;
+    --c-surface-container: 23 31 51;
+    --c-surface-container-high: 34 42 61;
+    --c-surface-container-highest: 45 52 73;
+    --c-surface-variant: 45 52 73;
+    --c-on-surface: 218 226 253;
+    --c-on-surface-variant: 196 201 172;
+    --c-primary: 255 255 255;
+    --c-on-primary: 40 53 0;
+    --c-primary-container: 195 244 0;
+    --c-on-primary-container: 85 109 0;
+    --c-primary-fixed: 195 244 0;
+    --c-primary-fixed-dim: 171 214 0;
+    --c-on-primary-fixed: 22 30 0;
+    --c-on-primary-fixed-variant: 60 77 0;
+    --c-secondary: 185 241 255;
+    --c-on-secondary: 0 54 63;
+    --c-secondary-container: 0 224 255;
+    --c-on-secondary-container: 0 95 109;
+    --c-secondary-fixed: 165 238 255;
+    --c-secondary-fixed-dim: 0 218 248;
+    --c-on-secondary-fixed: 0 31 37;
+    --c-on-secondary-fixed-variant: 0 78 90;
+    --c-tertiary: 255 255 255;
+    --c-on-tertiary: 33 49 69;
+    --c-tertiary-container: 211 228 254;
+    --c-on-tertiary-container: 118 136 163;
+    --c-tertiary-fixed: 211 228 254;
+    --c-tertiary-fixed-dim: 183 200 225;
+    --c-on-tertiary-fixed: 11 28 48;
+    --c-on-tertiary-fixed-variant: 56 72 93;
+    --c-error: 255 180 171;
+    --c-on-error: 105 0 5;
+    --c-error-container: 147 0 10;
+    --c-on-error-container: 255 218 214;
+    --c-outline: 142 147 121;
+    --c-outline-variant: 68 73 51;
+    --c-inverse-surface: 218 226 253;
+    --c-inverse-on-surface: 40 48 68;
+    --c-inverse-primary: 80 102 0;
+    --c-surface-tint: 171 214 0;
+
+    --c-word-untyped: #ffffff;
+    --c-word-correct: #64748b;
+    --c-word-incorrect: #ffb4ab;
+    --c-word-incorrect-line: #ef4444;
+  }
+
+  /* Mode Terang / Kertas Sekolah (ideal for classroom projectors & daylight) */
+  [data-theme="school-light"] {
+    --c-background: 241 245 249;
+    --c-on-background: 15 23 42;
+    --c-surface: 255 255 255;
+    --c-surface-dim: 226 232 240;
+    --c-surface-bright: 226 232 240;
+    --c-surface-container-lowest: 255 255 255;
+    --c-surface-container-low: 248 250 252;
+    --c-surface-container: 255 255 255;
+    --c-surface-container-high: 241 245 249;
+    --c-surface-container-highest: 226 232 240;
+    --c-surface-variant: 226 232 240;
+    --c-on-surface: 15 23 42;
+    --c-on-surface-variant: 71 85 105;
+    --c-primary: 15 23 42;
+    --c-on-primary: 255 255 255;
+    --c-primary-container: 29 78 216;
+    --c-on-primary-container: 255 255 255;
+    --c-primary-fixed: 29 78 216;
+    --c-primary-fixed-dim: 30 64 175;
+    --c-on-primary-fixed: 255 255 255;
+    --c-on-primary-fixed-variant: 239 246 255;
+    --c-secondary: 3 105 161;
+    --c-on-secondary: 255 255 255;
+    --c-secondary-container: 224 242 254;
+    --c-on-secondary-container: 12 74 110;
+    --c-secondary-fixed: 14 116 144;
+    --c-secondary-fixed-dim: 8 145 178;
+    --c-on-secondary-fixed: 255 255 255;
+    --c-on-secondary-fixed-variant: 224 242 254;
+    --c-tertiary: 15 23 42;
+    --c-on-tertiary: 255 255 255;
+    --c-tertiary-container: 241 245 249;
+    --c-on-tertiary-container: 71 85 105;
+    --c-tertiary-fixed: 226 232 240;
+    --c-tertiary-fixed-dim: 203 213 225;
+    --c-on-tertiary-fixed: 15 23 42;
+    --c-on-tertiary-fixed-variant: 51 65 85;
+    --c-error: 220 38 38;
+    --c-on-error: 255 255 255;
+    --c-error-container: 254 226 226;
+    --c-on-error-container: 153 27 27;
+    --c-outline: 100 116 139;
+    --c-outline-variant: 148 163 184;
+    --c-inverse-surface: 15 23 42;
+    --c-inverse-on-surface: 248 250 252;
+    --c-inverse-primary: 96 165 250;
+    --c-surface-tint: 29 78 216;
+
+    --c-word-untyped: #0f172a;
+    --c-word-correct: #94a3b8;
+    --c-word-incorrect: #dc2626;
+    --c-word-incorrect-line: #b91c1c;
+  }
+
+  /* Ocean Blue */
+  [data-theme="ocean-blue"] {
+    --c-background: 7 25 37;
+    --c-on-background: 224 242 254;
+    --c-surface: 7 25 37;
+    --c-surface-dim: 5 19 29;
+    --c-surface-bright: 26 62 88;
+    --c-surface-container-lowest: 4 15 23;
+    --c-surface-container-low: 11 33 49;
+    --c-surface-container: 15 39 56;
+    --c-surface-container-high: 21 51 72;
+    --c-surface-container-highest: 30 66 92;
+    --c-surface-variant: 28 60 84;
+    --c-on-surface: 224 242 254;
+    --c-on-surface-variant: 148 184 210;
+    --c-primary: 240 249 255;
+    --c-on-primary: 7 25 37;
+    --c-primary-container: 56 189 248;
+    --c-on-primary-container: 7 25 37;
+    --c-primary-fixed: 56 189 248;
+    --c-primary-fixed-dim: 14 165 233;
+    --c-on-primary-fixed: 6 22 33;
+    --c-on-primary-fixed-variant: 12 74 110;
+    --c-secondary: 94 234 212;
+    --c-on-secondary: 4 47 46;
+    --c-secondary-container: 45 212 191;
+    --c-on-secondary-container: 4 47 46;
+    --c-secondary-fixed: 153 246 228;
+    --c-secondary-fixed-dim: 45 212 191;
+    --c-on-secondary-fixed: 4 47 46;
+    --c-on-secondary-fixed-variant: 17 94 89;
+    --c-tertiary: 255 255 255;
+    --c-on-tertiary: 15 39 56;
+    --c-tertiary-container: 186 230 253;
+    --c-on-tertiary-container: 115 155 184;
+    --c-tertiary-fixed: 224 242 254;
+    --c-tertiary-fixed-dim: 186 230 253;
+    --c-on-tertiary-fixed: 12 74 110;
+    --c-on-tertiary-fixed-variant: 3 105 161;
+    --c-error: 252 165 165;
+    --c-on-error: 127 29 29;
+    --c-error-container: 153 27 27;
+    --c-on-error-container: 254 226 226;
+    --c-outline: 100 138 166;
+    --c-outline-variant: 45 85 115;
+    --c-inverse-surface: 224 242 254;
+    --c-inverse-on-surface: 15 39 56;
+    --c-inverse-primary: 2 132 199;
+    --c-surface-tint: 56 189 248;
+
+    --c-word-untyped: #f0f9ff;
+    --c-word-correct: #527996;
+    --c-word-incorrect: #fca5a5;
+    --c-word-incorrect-line: #ef4444;
+  }
+
+  /* Warm Sepia */
+  [data-theme="warm-sepia"] {
+    --c-background: 28 22 19;
+    --c-on-background: 245 235 225;
+    --c-surface: 28 22 19;
+    --c-surface-dim: 22 17 15;
+    --c-surface-bright: 68 54 46;
+    --c-surface-container-lowest: 18 14 12;
+    --c-surface-container-low: 35 28 24;
+    --c-surface-container: 42 33 28;
+    --c-surface-container-high: 54 43 37;
+    --c-surface-container-highest: 66 53 45;
+    --c-surface-variant: 63 50 42;
+    --c-on-surface: 245 235 225;
+    --c-on-surface-variant: 204 185 168;
+    --c-primary: 254 243 199;
+    --c-on-primary: 41 29 10;
+    --c-primary-container: 245 158 11;
+    --c-on-primary-container: 41 25 5;
+    --c-primary-fixed: 245 158 11;
+    --c-primary-fixed-dim: 217 119 6;
+    --c-on-primary-fixed: 28 19 5;
+    --c-on-primary-fixed-variant: 120 53 15;
+    --c-secondary: 167 243 208;
+    --c-on-secondary: 6 78 59;
+    --c-secondary-container: 52 211 153;
+    --c-on-secondary-container: 6 78 59;
+    --c-secondary-fixed: 167 243 208;
+    --c-secondary-fixed-dim: 52 211 153;
+    --c-on-secondary-fixed: 6 78 59;
+    --c-on-secondary-fixed-variant: 4 120 87;
+    --c-tertiary: 255 251 235;
+    --c-on-tertiary: 42 33 28;
+    --c-tertiary-container: 231 216 201;
+    --c-on-tertiary-container: 168 150 134;
+    --c-tertiary-fixed: 245 235 225;
+    --c-tertiary-fixed-dim: 214 197 181;
+    --c-on-tertiary-fixed: 42 33 28;
+    --c-on-tertiary-fixed-variant: 87 70 58;
+    --c-error: 252 165 165;
+    --c-on-error: 127 29 29;
+    --c-error-container: 153 27 27;
+    --c-on-error-container: 254 226 226;
+    --c-outline: 156 138 122;
+    --c-outline-variant: 92 75 63;
+    --c-inverse-surface: 245 235 225;
+    --c-inverse-on-surface: 42 33 28;
+    --c-inverse-primary: 180 83 9;
+    --c-surface-tint: 245 158 11;
+
+    --c-word-untyped: #fef3c7;
+    --c-word-correct: #8c7867;
+    --c-word-incorrect: #fca5a5;
+    --c-word-incorrect-line: #ef4444;
+  }
+
   body {
-    background-color: #0b1326;
-    color: #dae2fd;
+    background-color: rgb(var(--c-background));
+    color: rgb(var(--c-on-background));
     overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -16,12 +241,20 @@
   }
 
   .caret-glow {
-    box-shadow: 0 0 8px 2px rgba(195, 244, 0, 0.4);
+    box-shadow: 0 0 8px 2px rgb(var(--c-primary-fixed) / 0.45);
   }
 
-  .typing-word-untyped { color: #ffffff; }
-  .typing-word-correct { color: #56657c; }
-  .typing-word-incorrect { color: #ffb4ab; text-decoration: underline; text-decoration-color: #93000a; }
+  .typing-word-untyped {
+    color: var(--c-word-untyped);
+  }
+  .typing-word-correct {
+    color: var(--c-word-correct);
+  }
+  .typing-word-incorrect {
+    color: var(--c-word-incorrect);
+    text-decoration: underline;
+    text-decoration-color: var(--c-word-incorrect-line);
+  }
 }
 
 @keyframes pulse-caret {
@@ -33,7 +266,6 @@
   animation: pulse-caret 1s infinite;
 }
 
-/* Technical-Minimalist focus states */
 .focus-outline:focus-within {
-  outline: 2px solid #c3f400;
+  outline: 2px solid rgb(var(--c-primary-fixed));
 }

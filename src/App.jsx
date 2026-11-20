@@ -21,6 +21,7 @@ const GAME_STATE = {
 };
 
 const DEFAULT_SETTINGS = {
+  theme: 'cyber-lime', // 'cyber-lime' | 'school-light' | 'ocean-blue' | 'warm-sepia'
   mode: 'time', // 'time' | 'words' | 'quote'
   time: 30,
   wordCount: 25,
@@ -180,6 +181,31 @@ function App() {
     profileRef.current = profile;
     elapsedRef.current = elapsedTime;
   });
+
+  // Apply selected theme preset to document root & resolve canonical URL for SEO
+  useEffect(() => {
+    const activeTheme = settings.theme || 'cyber-lime';
+    document.documentElement.setAttribute('data-theme', activeTheme);
+
+    if (typeof window !== 'undefined') {
+      const canonicalUrl = window.location.origin + window.location.pathname;
+      let linkEl = document.querySelector('link[rel="canonical"]');
+      if (!linkEl) {
+        linkEl = document.createElement('link');
+        linkEl.setAttribute('rel', 'canonical');
+        document.head.appendChild(linkEl);
+      }
+      linkEl.setAttribute('href', canonicalUrl);
+
+      let ogUrlEl = document.querySelector('meta[property="og:url"]');
+      if (!ogUrlEl) {
+        ogUrlEl = document.createElement('meta');
+        ogUrlEl.setAttribute('property', 'og:url');
+        document.head.appendChild(ogUrlEl);
+      }
+      ogUrlEl.setAttribute('content', canonicalUrl);
+    }
+  }, [settings.theme]);
 
   // Personal Best WPM from saved history
   const [personalBest, setPersonalBest] = useState(() => {
@@ -646,7 +672,7 @@ function App() {
       case 'leaderboard':
         return <LeaderboardView profile={profile} setView={setCurrentView} />;
       case 'history':
-        return <HistoryView setView={setCurrentView} />;
+        return <HistoryView setView={setCurrentView} settings={settings} />;
       case 'settings':
         return (
           <SettingsView

@@ -13,6 +13,7 @@ import {
   getPerformanceRating,
   getFingerInfo,
 } from '../utils/typing';
+import { getThemeById } from '../utils/themes';
 
 export default function ResultsView({
   stats,
@@ -27,6 +28,8 @@ export default function ResultsView({
 
   const consistency = calculateConsistency(chartData);
   const rating = getPerformanceRating(stats.wpm);
+  const activeTheme = getThemeById(settings?.theme);
+  const chartColors = activeTheme.chart;
 
   const topMissedKeys = Object.entries(missedKeys)
     .sort((a, b) => b[1] - a[1])
@@ -228,14 +231,14 @@ export default function ResultsView({
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#2d3449"
+                  stroke={chartColors.grid}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="time"
-                  stroke="#56657c"
+                  stroke={chartColors.tick}
                   tick={{
-                    fill: '#8e9379',
+                    fill: chartColors.tick,
                     fontSize: 12,
                     fontFamily: 'JetBrains Mono',
                   }}
@@ -243,9 +246,9 @@ export default function ResultsView({
                 />
                 <YAxis
                   yAxisId="left"
-                  stroke="#56657c"
+                  stroke={chartColors.tick}
                   tick={{
-                    fill: '#8e9379',
+                    fill: chartColors.tick,
                     fontSize: 12,
                     fontFamily: 'JetBrains Mono',
                   }}
@@ -254,9 +257,9 @@ export default function ResultsView({
                   yAxisId="right"
                   orientation="right"
                   domain={[0, 100]}
-                  stroke="#56657c"
+                  stroke={chartColors.tick}
                   tick={{
-                    fill: '#8e9379',
+                    fill: chartColors.tick,
                     fontSize: 12,
                     fontFamily: 'JetBrains Mono',
                   }}
@@ -264,12 +267,12 @@ export default function ResultsView({
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#131b2e',
-                    borderColor: '#444933',
+                    backgroundColor: chartColors.tooltipBg,
+                    borderColor: chartColors.tooltipBorder,
                     borderRadius: '8px',
                   }}
                   itemStyle={{ fontFamily: 'JetBrains Mono', fontSize: '12px' }}
-                  labelStyle={{ color: '#dae2fd', marginBottom: '6px' }}
+                  labelStyle={{ color: chartColors.tooltipText, marginBottom: '6px' }}
                   labelFormatter={(label) => `Detik ke-${label}`}
                 />
                 <Legend
@@ -284,17 +287,17 @@ export default function ResultsView({
                   type="monotone"
                   dataKey="wpm"
                   name="Net WPM"
-                  stroke="#c3f400"
+                  stroke={chartColors.primary}
                   strokeWidth={3}
-                  dot={{ r: 3, fill: '#0b1326', stroke: '#c3f400', strokeWidth: 2 }}
-                  activeDot={{ r: 5, fill: '#c3f400', stroke: '#0b1326', strokeWidth: 2 }}
+                  dot={{ r: 3, fill: activeTheme.preview.bg, stroke: chartColors.primary, strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: chartColors.primary, stroke: activeTheme.preview.bg, strokeWidth: 2 }}
                 />
                 <Line
                   yAxisId="left"
                   type="monotone"
                   dataKey="rawWpm"
                   name="Raw WPM"
-                  stroke="#8e9379"
+                  stroke={chartColors.raw}
                   strokeWidth={2}
                   strokeDasharray="4 4"
                   dot={false}
@@ -304,10 +307,10 @@ export default function ResultsView({
                   type="monotone"
                   dataKey="accuracy"
                   name="Akurasi (%)"
-                  stroke="#00daf8"
+                  stroke={chartColors.secondary}
                   strokeWidth={2.5}
-                  dot={{ r: 3, fill: '#0b1326', stroke: '#00daf8', strokeWidth: 2 }}
-                  activeDot={{ r: 5, fill: '#00daf8', stroke: '#0b1326', strokeWidth: 2 }}
+                  dot={{ r: 3, fill: activeTheme.preview.bg, stroke: chartColors.secondary, strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: chartColors.secondary, stroke: activeTheme.preview.bg, strokeWidth: 2 }}
                 />
               </LineChart>
             </ResponsiveContainer>

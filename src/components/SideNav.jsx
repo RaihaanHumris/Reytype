@@ -1,3 +1,5 @@
+import { THEMES } from '../utils/themes';
+
 export default function SideNav({ currentView, setView, settings, onSettingsChange }) {
   const timeOptions = [
     { value: 15, icon: 'timer_10' },
@@ -15,6 +17,16 @@ export default function SideNav({ currentView, setView, settings, onSettingsChan
         : 'off';
     onSettingsChange({ ...settings, sound: nextSound });
   };
+
+  const cycleTheme = () => {
+    const currentId = settings.theme || 'cyber-lime';
+    const currentIdx = THEMES.findIndex((t) => t.id === currentId);
+    const nextTheme = THEMES[(currentIdx + 1) % THEMES.length];
+    onSettingsChange({ ...settings, theme: nextTheme.id });
+  };
+
+  const activeThemeObj =
+    THEMES.find((t) => t.id === (settings.theme || 'cyber-lime')) || THEMES[0];
 
   return (
     <aside className="hidden md:flex h-screen w-20 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant/25 flex-col items-center py-6 z-50">
@@ -71,7 +83,16 @@ export default function SideNav({ currentView, setView, settings, onSettingsChan
         })}
       </div>
 
-      <div className="mt-auto flex flex-col gap-4 w-full items-center">
+      <div className="mt-auto flex flex-col gap-3.5 w-full items-center">
+        <button
+          type="button"
+          onClick={cycleTheme}
+          className="w-11 h-11 flex items-center justify-center rounded-lg text-on-tertiary-container hover:bg-surface-variant/60 hover:text-primary-fixed transition-all active:scale-90 cursor-pointer"
+          title={`Tema: ${activeThemeObj.name} (Klik untuk ganti)`}
+        >
+          <span className="material-symbols-outlined text-[20px]">palette</span>
+        </button>
+
         <button
           type="button"
           onClick={() =>
@@ -82,7 +103,11 @@ export default function SideNav({ currentView, setView, settings, onSettingsChan
               ? 'text-primary-fixed bg-surface-variant border border-primary-fixed/40'
               : 'text-on-tertiary-container hover:bg-surface-variant/60 hover:text-on-surface'
           }`}
-          title={settings.showKeyboard ? 'Sembunyikan Keyboard Virtual' : 'Tampilkan Keyboard Virtual'}
+          title={
+            settings.showKeyboard
+              ? 'Sembunyikan Keyboard Virtual'
+              : 'Tampilkan Keyboard Virtual'
+          }
         >
           <span className="material-symbols-outlined text-[20px]">
             {settings.showKeyboard ? 'keyboard_alt' : 'keyboard_hide'}

@@ -1,4 +1,5 @@
 import { playKeySound } from '../utils/typing';
+import { THEMES } from '../utils/themes';
 
 export default function SettingsView({ settings, onSettingsChange, onResetSettings }) {
   const handleSoundSelect = (soundMode) => {
@@ -8,15 +9,17 @@ export default function SettingsView({ settings, onSettingsChange, onResetSettin
     }
   };
 
+  const activeTheme = settings.theme || 'cyber-lime';
+
   return (
     <div className="max-w-container-max w-full bg-surface-container rounded-xl p-6 sm:p-8 border border-outline-variant/25">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-outline-variant/20">
         <div>
           <h2 className="font-headline-md text-primary text-2xl sm:text-3xl">
-            Pengaturan Latihan
+            Pengaturan Latihan & Tema
           </h2>
           <p className="font-body-sm text-xs text-on-surface-variant mt-1">
-            Sesuaikan bahasa, tingkat kosakata, panduan 10 jari, kursor, dan suara ketikan
+            Sesuaikan tema warna layar, bahasa, tingkat kosakata, panduan 10 jari, dan suara ketikan
           </p>
         </div>
         {onResetSettings && (
@@ -28,6 +31,75 @@ export default function SettingsView({ settings, onSettingsChange, onResetSettin
             Reset Default
           </button>
         )}
+      </div>
+
+      {/* Theme Presets Section */}
+      <div className="mb-8 pb-8 border-b border-outline-variant/20">
+        <div className="mb-3">
+          <label className="font-metric-label text-xs text-on-tertiary-container uppercase tracking-wider">
+            Pilihan Tema Warna
+          </label>
+          <p className="font-body-sm text-xs text-on-surface-variant mt-0.5">
+            Pilih suasana warna yang nyaman untuk mata atau proyektor ruang kelas
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {THEMES.map((theme) => {
+            const isSelected = activeTheme === theme.id;
+            return (
+              <button
+                key={theme.id}
+                type="button"
+                onClick={() => onSettingsChange({ ...settings, theme: theme.id })}
+                className={`text-left p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                  isSelected
+                    ? 'bg-surface-container-high border-primary-fixed ring-2 ring-primary-fixed/30'
+                    : 'bg-surface-container-low border-outline-variant/30 hover:border-primary/40'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-headline-md text-sm text-primary font-bold">
+                      {theme.name}
+                    </span>
+                    {isSelected && (
+                      <span className="material-symbols-outlined text-primary-fixed text-[18px]">
+                        check_circle
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-body-sm text-xs text-on-surface-variant leading-snug">
+                    {theme.description}
+                  </p>
+                </div>
+
+                {/* Theme Palette Preview Swatch */}
+                <div
+                  className="w-full h-9 rounded-lg border border-black/15 px-3 flex items-center justify-between"
+                  style={{ backgroundColor: theme.preview.bg }}
+                >
+                  <span
+                    className="font-display-typing text-xs font-bold"
+                    style={{ color: theme.preview.text }}
+                  >
+                    abc
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="w-4 h-4 rounded-full border border-white/20"
+                      style={{ backgroundColor: theme.preview.surface }}
+                    />
+                    <span
+                      className="w-4 h-4 rounded-full border border-white/20"
+                      style={{ backgroundColor: theme.preview.accent }}
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
