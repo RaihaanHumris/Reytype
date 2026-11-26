@@ -39,7 +39,9 @@ export default function ResultsView({
     settings?.mode === 'words'
       ? `${settings.wordCount || 25} Kata`
       : settings?.mode === 'quote'
-      ? 'Kutipan'
+      ? settings?.quoteSource === 'custom'
+        ? 'Kutipan Sendiri'
+        : 'Kutipan'
       : `Waktu ${settings?.time || stats.timeElapsed}s`;
 
   const langLabel =

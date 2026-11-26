@@ -23,6 +23,10 @@ export default function PracticeView({
   lastPressedKey,
   missedKeys,
   personalBest,
+  customQuotes = [],
+  onSaveCustomQuote,
+  onDeleteCustomQuote,
+  onSelectCustomQuote,
 }) {
   const containerRef = useRef(null);
   const wordsScrollRef = useRef(null);
@@ -37,8 +41,17 @@ export default function PracticeView({
   const [customTimeValue, setCustomTimeValue] = useState('60');
   const [customTimeUnit, setCustomTimeUnit] = useState('seconds');
 
+  // Custom Quote Modal State
+  const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
+  const [editingQuoteId, setEditingQuoteId] = useState(null);
+  const [quoteTitleInput, setQuoteTitleInput] = useState('');
+  const [quoteTextInput, setQuoteTextInput] = useState('');
+  const [quoteFormError, setQuoteFormError] = useState('');
+
+  const isAnyModalOpen = showCustomModal || showCustomQuoteModal;
+
   const focusStage = () => {
-    if (showCustomModal) return;
+    if (isAnyModalOpen) return;
     if (mobileInputRef.current) {
       mobileInputRef.current.focus({ preventScroll: true });
     } else if (containerRef.current) {
@@ -49,14 +62,14 @@ export default function PracticeView({
 
   // Auto-focus DOM input when words reset or pause toggles off
   useEffect(() => {
-    if (!showCustomModal && !isPaused) {
+    if (!isAnyModalOpen && !isPaused) {
       if (mobileInputRef.current) {
         mobileInputRef.current.focus({ preventScroll: true });
       } else if (containerRef.current) {
         containerRef.current.focus({ preventScroll: true });
       }
     }
-  }, [words, isPaused, showCustomModal]);
+  }, [words, isPaused, isAnyModalOpen]);
 
   // Keep active word centered inside the typing box WITHOUT scrolling the browser window
   useEffect(() => {
@@ -236,21 +249,111 @@ export default function PracticeView({
             </div>
           )}
 
-          {mode === 'quote' && (
-            <div className="flex items-center gap-2">
-              <span className="font-metric-label text-xs text-on-surface-variant">
-                Mengetik Kutipan Utuh
-              </span>
-              <button
-                type="button"
-                onClick={onRestart}
-                className="px-3 py-1 rounded-md bg-surface-container hover:bg-surface-variant text-primary-fixed font-metric-label text-xs border border-outline-variant/30 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <span className="material-symbols-outlined text-[14px]">refresh</span>
-                Kutipan Baru
-              </button>
-            </div>
-          )}
+          {mode === 'quote' && (() => {
+            const quoteSource = settings.quoteSource || 'builtin';
+            const activeCustomQuote =
+              quoteSource === 'custom'
+                ? customQuotes.find((q) => q.id === settings.activeCustomQuoteId) ||
+                  customQuotes[0] ||
+                  null
+                : null;
+
+            const openNewQuoteModal = () => {
+              setEditingQuoteId(null);
+              setQuoteTitleInput('');
+              setQuoteTextInput('');
+              setQuoteFormError('');
+              setShowCustomQuoteModal(true);
+            };
+
+            const openEditQuoteModal = (quote) => {
+              setEditingQuoteId(quote.id);
+              setQuoteTitleInput(quote.title || '');
+              setQuoteTextInput(quote.text || '');
+              setQuoteFormError('');
+              setShowCustomQuoteModal(true);
+            };
+
+            return (
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Quote Source Toggle: Bawaan vs Kutipan Saya */}
+                <div className="flex items-center gap-1 bg-surface-container p-1 rounded-lg border border-outline-variant/20">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onSettingsChange({
+                        ...settings,
+                        mode: 'quote',
+                        quoteSource: 'builtin',
+                      })
+                    }
+                    className={`px-2.5 py-1 font-metric-label text-xs rounded-md transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                      quoteSource === 'builtin'
+                        ? 'text-primary-fixed bg-surface-variant font-bold'
+                        : 'text-on-surface-variant hover:text-primary'
+                    }`}
+                  >
+                    Bawaan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (customQuotes.length === 0) {
+                        openNewQuoteModal();
+                      } else {
+                        onSettingsChange({
+                          ...settings,
+                          mode: 'quote',
+                          quoteSource: 'custom',
+                          activeCustomQuoteId:
+                            settings.activeCustomQuoteId || customQuotes[0].id,
+                        });
+                      }
+                    }}
+                    className={`px-2.5 py-1 font-metric-label text-xs rounded-md transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                      quoteSource === 'custom'
+                        ? 'text-primary-fixed bg-surface-variant font-bold'
+                        : 'text-on-surface-variant hover:text-primary'
+                    }`}
+                  >
+                    Kutipan Saya{customQuotes.length > 0 ? ` (${customQuotes.length})` : ''}
+                  </button>
+                </div>
+
+                {quoteSource === 'builtin' ? (
+                  <button
+                    type="button"
+                    onClick={onRestart}
+                    className="px-3 py-1 rounded-md bg-surface-container hover:bg-surface-variant text-primary-fixed font-metric-label text-xs border border-outline-variant/30 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">refresh</span>
+                    Kutipan Baru
+                  </button>
+                ) : activeCustomQuote ? (
+                  <button
+                    type="button"
+                    onClick={() => openEditQuoteModal(activeCustomQuote)}
+                    className="px-3 py-1 rounded-md bg-surface-container hover:bg-surface-variant text-on-surface font-metric-label text-xs border border-outline-variant/30 flex items-center gap-1.5 cursor-pointer max-w-[200px]"
+                    title={`Ubah atau pilih kutipan: ${activeCustomQuote.title}`}
+                  >
+                    <span className="material-symbols-outlined text-[14px] text-primary-fixed shrink-0">
+                      edit_note
+                    </span>
+                    <span className="truncate">{activeCustomQuote.title}</span>
+                  </button>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={openNewQuoteModal}
+                  className="px-3 py-1 rounded-md bg-primary-fixed/15 hover:bg-primary-fixed/25 text-primary-fixed font-metric-label text-xs border border-primary-fixed/40 flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0 font-bold"
+                >
+                  <span className="material-symbols-outlined text-[14px]">add</span>
+                  Buat Kutipan
+                </button>
+              </div>
+            );
+          })()}
 
           {/* Language Quick Switch */}
           <div className="flex items-center gap-1 bg-surface-container p-1 rounded-lg border border-outline-variant/20">
@@ -634,7 +737,7 @@ export default function PracticeView({
         )}
 
         {/* Overlay when Unfocused (only if not paused and modal closed) */}
-        {!isFocused && !isPaused && !showCustomModal && (
+        {!isFocused && !isPaused && !isAnyModalOpen && (
           <div
             onClick={focusStage}
             className="absolute inset-0 flex items-center justify-center bg-surface-container/80 backdrop-blur-[2px] rounded-xl cursor-pointer z-10 transition-opacity"
@@ -787,6 +890,231 @@ export default function PracticeView({
           </div>
         </div>
       )}
+
+      {/* Custom Quote Creator & Manager Modal */}
+      {showCustomQuoteModal && (() => {
+        const draftWordList = quoteTextInput
+          .trim()
+          .replace(/\s+/g, ' ')
+          .split(' ')
+          .filter(Boolean);
+        const draftWordCount = draftWordList.length;
+        const draftCharCount = quoteTextInput.trim().length;
+
+        const handleQuoteFormSubmit = (e) => {
+          e.preventDefault();
+          if (draftWordCount < 2 || draftCharCount < 5) {
+            setQuoteFormError('Masukkan minimal 2 kata agar bisa dilatih dengan baik.');
+            return;
+          }
+          if (onSaveCustomQuote) {
+            onSaveCustomQuote({
+              id: editingQuoteId,
+              title: quoteTitleInput,
+              text: quoteTextInput,
+            });
+          }
+          setQuoteFormError('');
+          setEditingQuoteId(null);
+          setQuoteTitleInput('');
+          setQuoteTextInput('');
+          setShowCustomQuoteModal(false);
+        };
+
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in"
+            onClick={() => setShowCustomQuoteModal(false)}
+          >
+            <div
+              className="bg-surface-container p-6 rounded-xl border border-outline-variant/40 w-full max-w-xl max-h-[90vh] overflow-y-auto animate-scale-in-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-outline-variant/20">
+                <div>
+                  <h3 className="text-xl font-headline-md text-primary">
+                    {editingQuoteId ? 'Ubah Kutipan Sendiri' : 'Buat Kutipan Sendiri'}
+                  </h3>
+                  <p className="font-body-sm text-xs text-on-surface-variant mt-0.5">
+                    Tulis atau tempel kalimat, materi pelajaran, maupun kutipan favoritmu untuk
+                    dilatih mengetik
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomQuoteModal(false)}
+                  className="text-on-surface-variant hover:text-primary cursor-pointer"
+                  aria-label="Tutup modal kutipan"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <form onSubmit={handleQuoteFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block font-metric-label text-xs text-on-tertiary-container mb-1.5">
+                    JUDUL KUTIPAN (OPSIONAL)
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={60}
+                    value={quoteTitleInput}
+                    onChange={(e) => setQuoteTitleInput(e.target.value)}
+                    placeholder="Contoh: Motto MAKN Ende atau Ringkasan Materi"
+                    className="w-full bg-surface-container-highest border border-outline-variant/40 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary-fixed font-body-sm"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-metric-label text-xs text-on-tertiary-container">
+                      TEKS KUTIPAN
+                    </label>
+                    <span className="font-metric-label text-[11px] text-on-surface-variant tabular-nums">
+                      {draftWordCount} kata · {draftCharCount} karakter
+                    </span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    value={quoteTextInput}
+                    onChange={(e) => {
+                      setQuoteTextInput(e.target.value);
+                      if (quoteFormError) setQuoteFormError('');
+                    }}
+                    placeholder="Ketik atau tempel teks kutipanmu di sini..."
+                    className="w-full bg-surface-container-highest border border-outline-variant/40 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary-fixed font-display-typing text-sm leading-relaxed resize-y"
+                    autoFocus
+                    required
+                  />
+                  {quoteFormError && (
+                    <p className="text-xs text-error mt-1.5 font-body-sm">{quoteFormError}</p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-1">
+                  {editingQuoteId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingQuoteId(null);
+                        setQuoteTitleInput('');
+                        setQuoteTextInput('');
+                        setQuoteFormError('');
+                      }}
+                      className="mr-auto px-3 py-2 rounded-lg text-on-surface-variant font-metric-label text-xs hover:bg-surface-variant transition-colors cursor-pointer"
+                    >
+                      + BUAT BARU
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomQuoteModal(false)}
+                    className="px-4 py-2 rounded-lg text-on-surface-variant font-metric-label text-xs hover:bg-surface-variant transition-colors cursor-pointer"
+                  >
+                    BATAL
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-lg bg-primary-fixed text-on-primary-fixed font-metric-label text-xs font-bold hover:brightness-110 transition-all cursor-pointer"
+                  >
+                    {editingQuoteId ? 'SIMPAN PERUBAHAN' : 'SIMPAN & LATIH SEKARANG'}
+                  </button>
+                </div>
+              </form>
+
+              {/* Saved Custom Quotes List */}
+              {customQuotes.length > 0 && (
+                <div className="mt-6 pt-5 border-t border-outline-variant/20">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-metric-label text-xs text-on-tertiary-container tracking-wider">
+                      KUTIPAN TERSIMPAN ({customQuotes.length})
+                    </h4>
+                  </div>
+                  <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                    {customQuotes.map((q) => {
+                      const isCurrent =
+                        settings.quoteSource === 'custom' &&
+                        (settings.activeCustomQuoteId === q.id ||
+                          (!settings.activeCustomQuoteId && customQuotes[0]?.id === q.id));
+                      const qWordCount = q.text.trim().split(/\s+/).filter(Boolean).length;
+
+                      return (
+                        <div
+                          key={q.id}
+                          className={`p-3 rounded-lg border transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                            isCurrent
+                              ? 'bg-primary-fixed/10 border-primary-fixed/40'
+                              : 'bg-surface-container-low border-outline-variant/25'
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-body-sm text-sm font-semibold text-primary truncate">
+                                {q.title}
+                              </span>
+                              <span className="text-xs text-on-surface-variant tabular-nums shrink-0">
+                                · {qWordCount} kata
+                              </span>
+                            </div>
+                            <p className="font-body-sm text-xs text-on-surface-variant line-clamp-1 mt-0.5">
+                              {q.text}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (onSelectCustomQuote) onSelectCustomQuote(q.id);
+                                setShowCustomQuoteModal(false);
+                              }}
+                              className={`px-3 py-1.5 rounded-md font-metric-label text-xs transition-colors cursor-pointer whitespace-nowrap ${
+                                isCurrent
+                                  ? 'bg-primary-fixed text-on-primary-fixed font-bold'
+                                  : 'bg-surface-variant text-on-surface hover:text-primary-fixed'
+                              }`}
+                            >
+                              {isCurrent ? 'Dipakai' : 'Pakai'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingQuoteId(q.id);
+                                setQuoteTitleInput(q.title || '');
+                                setQuoteTextInput(q.text || '');
+                                setQuoteFormError('');
+                              }}
+                              className="p-1.5 rounded-md text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors cursor-pointer"
+                              title="Edit kutipan"
+                            >
+                              <span className="material-symbols-outlined text-[17px]">edit</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (onDeleteCustomQuote) onDeleteCustomQuote(q.id);
+                                if (editingQuoteId === q.id) {
+                                  setEditingQuoteId(null);
+                                  setQuoteTitleInput('');
+                                  setQuoteTextInput('');
+                                }
+                              }}
+                              className="p-1.5 rounded-md text-on-surface-variant hover:text-error hover:bg-error-container/20 transition-colors cursor-pointer"
+                              title="Hapus kutipan"
+                            >
+                              <span className="material-symbols-outlined text-[17px]">delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

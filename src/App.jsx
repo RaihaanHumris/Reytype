@@ -23,6 +23,8 @@ const GAME_STATE = {
 const DEFAULT_SETTINGS = {
   theme: 'cyber-lime', // 'cyber-lime' | 'school-light' | 'ocean-blue' | 'warm-sepia'
   mode: 'time', // 'time' | 'words' | 'quote'
+  quoteSource: 'builtin', // 'builtin' | 'custom'
+  activeCustomQuoteId: null,
   time: 30,
   wordCount: 25,
   isCustomTime: false,
@@ -43,7 +45,26 @@ const DEFAULT_PROFILE = {
   goalWpm: 60,
 };
 
-function buildSessionWords(cfg) {
+function parseCustomQuoteWords(text) {
+  if (!text || typeof text !== 'string') return [];
+  return text
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .filter(Boolean);
+}
+
+function buildSessionWords(cfg, customQuotesList = []) {
+  if (cfg.mode === 'quote' && cfg.quoteSource === 'custom' && customQuotesList.length > 0) {
+    const selected =
+      customQuotesList.find((q) => q.id === cfg.activeCustomQuoteId) ||
+      customQuotesList[0];
+    const parsed = parseCustomQuoteWords(selected?.text);
+    if (parsed.length > 0) {
+      return parsed;
+    }
+  }
+
   const count = cfg.mode === 'words' ? cfg.wordCount || 25 : 60;
   return generateWords(count, cfg.language, {
     difficulty: cfg.difficulty,
@@ -148,9 +169,23 @@ function App() {
     return DEFAULT_PROFILE;
   });
 
+  // Persisted Custom Quotes
+  const [customQuotes, setCustomQuotes] = useState(() => {
+    try {
+      const saved = localStorage.getItem('typerush_custom_quotes');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return [];
+  });
+
   // Game State
   const [gameState, setGameState] = useState(GAME_STATE.IDLE);
-  const [words, setWords] = useState(() => buildSessionWords(settings));
+  const [words, setWords] = useState(() => buildSessionWords(settings, customQuotes));
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [typedChars, setTypedChars] = useState({});
@@ -307,15 +342,16 @@ function App() {
 
   // Restart session
   const handleRestart = useCallback(
-    (overrideSettings) => {
+    (overrideSettings, overrideCustomQuotes) => {
       const activeCfg = overrideSettings || settings;
+      const activeQuotes = overrideCustomQuotes || customQuotes;
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
       hasSavedResultRef.current = false;
       setIsNewPersonalBest(false);
       setGameState(GAME_STATE.IDLE);
-      setWords(buildSessionWords(activeCfg));
+      setWords(buildSessionWords(activeCfg, activeQuotes));
       setCurrentWordIndex(0);
       setCurrentCharIndex(0);
       setTypedChars({});
@@ -325,12 +361,12 @@ function App() {
       setLastPressedKey('');
       setMissedKeys({});
     },
-    [settings]
+    [settings, customQuotes]
   );
 
   // Settings change handler
   const handleSettingsChange = useCallback(
-    (newSettings) => {
+    (newSettings, overrideCustomQuotes) => {
       setSettings(newSettings);
       try {
         localStorage.setItem('typerush_settings', JSON.stringify(newSettings));
@@ -342,16 +378,104 @@ function App() {
         newSettings.language !== settings.language ||
         newSettings.time !== settings.time ||
         newSettings.mode !== settings.mode ||
+        newSettings.quoteSource !== settings.quoteSource ||
+        newSettings.activeCustomQuoteId !== settings.activeCustomQuoteId ||
         newSettings.wordCount !== settings.wordCount ||
         newSettings.difficulty !== settings.difficulty ||
         newSettings.includePunctuation !== settings.includePunctuation ||
-        newSettings.includeNumbers !== settings.includeNumbers;
+        newSettings.includeNumbers !== settings.includeNumbers ||
+        Boolean(overrideCustomQuotes);
 
       if (needsWordRegen) {
-        handleRestart(newSettings);
+        handleRestart(newSettings, overrideCustomQuotes);
       }
     },
     [settings, handleRestart]
+  );
+
+  // Save (create or update) a custom quote and load it immediately
+  const handleSaveCustomQuote = useCallback(
+    ({ id, title, text }) => {
+      const cleanText = text.trim().replace(/\s+/g, ' ');
+      if (!cleanText) return;
+      const cleanTitle =
+        (title || '').trim() ||
+        (cleanText.length > 36 ? `${cleanText.slice(0, 36)}...` : cleanText);
+
+      let targetId = id;
+      let nextQuotes;
+
+      if (id) {
+        nextQuotes = customQuotes.map((q) =>
+          q.id === id
+            ? { ...q, title: cleanTitle, text: cleanText, updatedAt: new Date().toISOString() }
+            : q
+        );
+      } else {
+        targetId = `cq-${Date.now()}`;
+        const newQuote = {
+          id: targetId,
+          title: cleanTitle,
+          text: cleanText,
+          createdAt: new Date().toISOString(),
+        };
+        nextQuotes = [newQuote, ...customQuotes];
+      }
+
+      setCustomQuotes(nextQuotes);
+      try {
+        localStorage.setItem('typerush_custom_quotes', JSON.stringify(nextQuotes));
+      } catch (e) {
+        console.error(e);
+      }
+
+      const nextSettings = {
+        ...settings,
+        mode: 'quote',
+        quoteSource: 'custom',
+        activeCustomQuoteId: targetId,
+      };
+      handleSettingsChange(nextSettings, nextQuotes);
+    },
+    [customQuotes, settings, handleSettingsChange]
+  );
+
+  // Delete a saved custom quote
+  const handleDeleteCustomQuote = useCallback(
+    (quoteId) => {
+      const nextQuotes = customQuotes.filter((q) => q.id !== quoteId);
+      setCustomQuotes(nextQuotes);
+      try {
+        localStorage.setItem('typerush_custom_quotes', JSON.stringify(nextQuotes));
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (settings.activeCustomQuoteId === quoteId) {
+        const nextActive = nextQuotes[0]?.id || null;
+        const nextSettings = {
+          ...settings,
+          quoteSource: nextActive ? 'custom' : 'builtin',
+          activeCustomQuoteId: nextActive,
+        };
+        handleSettingsChange(nextSettings, nextQuotes);
+      }
+    },
+    [customQuotes, settings, handleSettingsChange]
+  );
+
+  // Select an existing custom quote to practice immediately
+  const handleSelectCustomQuote = useCallback(
+    (quoteId) => {
+      const nextSettings = {
+        ...settings,
+        mode: 'quote',
+        quoteSource: 'custom',
+        activeCustomQuoteId: quoteId,
+      };
+      handleSettingsChange(nextSettings, customQuotes);
+    },
+    [settings, customQuotes, handleSettingsChange]
   );
 
   const handleResetSettings = useCallback(() => {
@@ -718,6 +842,10 @@ function App() {
             lastPressedKey={lastPressedKey}
             missedKeys={missedKeys}
             personalBest={personalBest}
+            customQuotes={customQuotes}
+            onSaveCustomQuote={handleSaveCustomQuote}
+            onDeleteCustomQuote={handleDeleteCustomQuote}
+            onSelectCustomQuote={handleSelectCustomQuote}
           />
         );
     }
